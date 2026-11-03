@@ -17,8 +17,6 @@ public class Player_Life : MonoBehaviour
             {
                 hp = hp - 5;
 
-                Debug.Log("Vida restante: " + hp);
-
                 ScoreManager scoreManager = FindFirstObjectByType<ScoreManager>();
                 scoreManager.ResetStreak();
 
@@ -26,9 +24,15 @@ public class Player_Life : MonoBehaviour
 
                 if (hp <= 0)
                 {
-                    SceneManager.LoadScene("Game");
+                    GameResult resultado = FindFirstObjectByType<GameResult>();
+
+                    resultado.MostrarResultado(false);
                 }
             }
         }
+    }
+    public int GetHealth()
+    {
+        return hp;
     }
 }

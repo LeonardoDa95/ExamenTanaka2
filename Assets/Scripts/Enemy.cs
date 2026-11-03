@@ -36,17 +36,13 @@ public class Enemy : MonoBehaviour
     {
         hp = hp - damage;
 
-        Debug.Log("Vida del enemigo: " + hp);
-
         if (hp <= 0)
         {
-            ScoreManager scoreManager =
-                FindFirstObjectByType<ScoreManager>();
+            ScoreManager scoreManager = FindFirstObjectByType<ScoreManager>();
 
             scoreManager.AddPoints(points);
 
-            Clear_Zone zone =
-                FindFirstObjectByType<Clear_Zone>();
+            Clear_Zone zone = FindFirstObjectByType<Clear_Zone>();
 
             zone.EnemyDefeated();
 

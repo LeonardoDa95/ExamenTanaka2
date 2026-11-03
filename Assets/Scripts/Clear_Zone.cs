@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class Clear_Zone : MonoBehaviour
@@ -8,6 +9,8 @@ public class Clear_Zone : MonoBehaviour
     [SerializeField] private Transform[] spawnsA;
     [SerializeField] private Transform[] spawnsB;
 
+    [SerializeField] private TMP_Text nivelAvisoText;
+
     private int level = 1;
     private int turns = 0;
     private int enemiesAlive = 0;
@@ -16,7 +19,7 @@ public class Clear_Zone : MonoBehaviour
 
     void Start()
     {
-        SpawnWave();
+        MostrarNivel();
     }
 
     void SpawnWave()
@@ -32,23 +35,39 @@ public class Clear_Zone : MonoBehaviour
             spawns = spawnsB;
         }
 
-        enemiesAlive = spawns.Length;
+        int cantidad = 4;
 
-        for (int i = 0; i < spawns.Length; i++)
+        if (level == 2)
         {
-            Instantiate(enemyPrefab, spawns[i].position,
-                spawns[i].rotation);
+            cantidad = 6;
+        }
+        else if (level == 3)
+        {
+            cantidad = 8;
         }
 
-        Debug.Log("Nivel: " + level);
-        Debug.Log("Enemigos: " + enemiesAlive);
+        enemiesAlive = cantidad;
+
+        for (int i = 0; i < cantidad; i++)
+        {
+            int spawnIndex = i % spawns.Length;
+
+            Vector3 posicion = spawns[spawnIndex].position;
+
+            if (i >= spawns.Length)
+            {
+                posicion += spawns[spawnIndex].right * 2f;
+            }
+
+            Instantiate(enemyPrefab, posicion,
+                spawns[spawnIndex].rotation);
+        }
+
     }
 
     public void EnemyDefeated()
     {
         enemiesAlive--;
-
-        Debug.Log("Enemigos restantes: " + enemiesAlive);
 
         if (enemiesAlive == 0)
         {
@@ -74,7 +93,11 @@ public class Clear_Zone : MonoBehaviour
 
             if (level > 3)
             {
-                Debug.Log("GANASTE EL JUEGO");
+                level = 3;
+
+                GameResult resultado = FindFirstObjectByType<GameResult>();
+
+                resultado.MostrarResultado(true);
                 return;
             }
 
@@ -85,14 +108,11 @@ public class Clear_Zone : MonoBehaviour
                 TurnPlayer();
             }
 
-            ScoreManager scoreManager =
-                FindFirstObjectByType<ScoreManager>();
+            ScoreManager scoreManager = FindFirstObjectByType<ScoreManager>();
 
             scoreManager.ResetStreak();
 
-            Debug.Log("Siguiente nivel: " + level);
-
-            SpawnWave();
+            MostrarNivel();
         }
     }
 
@@ -102,6 +122,31 @@ public class Clear_Zone : MonoBehaviour
 
         lookingAtA = !lookingAtA;
 
-        Debug.Log("Jugador giro 180 grados");
+    }
+
+    public int GetLevel()
+    {
+        return level;
+    }
+
+    public int GetEnemiesAlive()
+    {
+        return enemiesAlive;
+    }
+
+    void MostrarNivel()
+    {
+        nivelAvisoText.text = "NIVEL " + level;
+
+        nivelAvisoText.gameObject.SetActive(true);
+
+        Invoke(nameof(EmpezarNivel), 2f);
+    }
+
+    void EmpezarNivel()
+    {
+        nivelAvisoText.gameObject.SetActive(false);
+
+        SpawnWave();
     }
 }

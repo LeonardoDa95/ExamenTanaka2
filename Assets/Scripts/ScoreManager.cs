@@ -30,10 +30,6 @@ public class ScoreManager : MonoBehaviour
 
         score = score + points + bonus;
 
-        Debug.Log("Racha: " + streak);
-        Debug.Log("Bonus Fibonacci: " + bonus);
-        Debug.Log("Puntuacion total: " + score);
-
         int next = previous + current;
         previous = current;
         current = next;
@@ -47,6 +43,9 @@ public class ScoreManager : MonoBehaviour
         previous = 0;
         current = 1;
 
-        Debug.Log("Racha reiniciada");
+    }
+    public int GetStreak()
+    {
+        return streak;
     }
 }
