@@ -23,6 +23,11 @@ public class ScoreManager : MonoBehaviour
 
         int bonus = current * 10;
 
+        if (bonus > 500)
+        {
+            bonus = 500;
+        }
+
         score = score + points + bonus;
 
         Debug.Log("Racha: " + streak);
