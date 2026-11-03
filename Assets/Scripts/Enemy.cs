@@ -45,6 +45,11 @@ public class Enemy : MonoBehaviour
 
             scoreManager.AddPoints(points);
 
+            Clear_Zone zone =
+                FindFirstObjectByType<Clear_Zone>();
+
+            zone.EnemyDefeated();
+
             Destroy(gameObject);
         }
     }
