@@ -6,21 +6,46 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private int hp = 20;
-    [SerializeField] private int vel = 5;
+    [SerializeField] private float vel = 2f;
     [SerializeField] private int points = 50;
 
-    Rigidbody rb;
+    private Rigidbody rb;
     private Transform targetplayer;
 
-    private void Start()
+    void Start()
     {
         rb = GetComponent<Rigidbody>();
-        targetplayer = GetComponent<Transform>();
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        targetplayer = player.transform;
     }
 
-    private void Update()
+    void FixedUpdate()
     {
-        rb.linearVelocity = Vector3.zero;
-        transform.position = targetplayer.position;
+        Vector3 direction = targetplayer.position - transform.position;
+        direction.y = 0;
+        direction.Normalize();
+
+        rb.linearVelocity = new Vector3(
+            direction.x * vel,
+            rb.linearVelocity.y,
+            direction.z * vel
+        );
+    }
+    public void TakeDamage(int damage)
+    {
+        hp = hp - damage;
+
+        Debug.Log("Vida del enemigo: " + hp);
+
+        if (hp <= 0)
+        {
+            ScoreManager scoreManager =
+                FindFirstObjectByType<ScoreManager>();
+
+            scoreManager.AddPoints(points);
+
+            Destroy(gameObject);
+        }
     }
 }

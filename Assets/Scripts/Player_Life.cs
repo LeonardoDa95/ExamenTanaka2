@@ -5,24 +5,30 @@ using UnityEngine.SceneManagement;
 public class Player_Life : MonoBehaviour
 {
     [SerializeField] private int hp = 50;
-    Rigidbody rb;
+    [SerializeField] private float damageCooldown = 1f;
 
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+    private float nextDamageTime = 0f;
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.tag == "enemy")
+        if (collision.gameObject.CompareTag("enemy"))
         {
-            hp = hp -5;
-            Debug.Log("-5 de vida maldito");
-            if (hp <= 0)
+            if (Time.time >= nextDamageTime)
             {
-                SceneManager.LoadScene("Game");
+                hp = hp - 5;
+
+                Debug.Log("Vida restante: " + hp);
+
+                ScoreManager scoreManager = FindFirstObjectByType<ScoreManager>();
+                scoreManager.ResetStreak();
+
+                nextDamageTime = Time.time + damageCooldown;
+
+                if (hp <= 0)
+                {
+                    SceneManager.LoadScene("Game");
+                }
             }
         }
     }
-    
 }
